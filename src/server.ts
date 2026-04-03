@@ -5,9 +5,10 @@ import { BooksRoute } from '@routes/books.route';
 import { ValidateEnv } from '@utils/validateEnv';
 import { ShoppingCartRoute } from '@routes/shoppingCart.route';
 import { OrderRoute } from '@routes/order.route';
+import { ProposalRequestRoute } from '@routes/proposalRequest.route';
 
 ValidateEnv();
 
-const app = new App([new AuthRoute(), new UserRoute(), new BooksRoute(), new ShoppingCartRoute(), new OrderRoute()]);
+const app = new App([new AuthRoute(), new UserRoute(), new BooksRoute(), new ShoppingCartRoute(), new OrderRoute(), new ProposalRequestRoute()]);
 
 app.listen();
