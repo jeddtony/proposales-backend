@@ -1,0 +1,864 @@
+tags:
+- name: auth
+  description: Authentication API
+- name: users
+  description: users API
+- name: books
+  description: books API
+- name: shopping-cart
+  description: shopping cart API
+- name: orders
+  description: orders API
+
+paths:
+# [POST] signup
+  /signup:
+    post:
+      tags:
+      - auth
+      summary: User Signup
+      description: Register a new user account
+      parameters:
+      - name: body
+        in: body
+        description: User registration data
+        required: true
+        schema:
+          $ref: '#/definitions/authCredentials'
+      responses:
+        201:
+          description: 'Created - User successfully registered'
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  email:
+                    type: string
+                    example: "user@mail.com"
+              message:
+                type: string
+                example: 'User created successfully'
+        400:
+          description: 'Bad Request - Validation Error'
+        409:
+          description: 'Conflict - User already exists'
+        500:
+          description: 'Server Error'
+
+# [POST] login
+  /login:
+    post:
+      tags:
+      - auth
+      summary: User Login
+      description: Authenticate user and return JWT token
+      parameters:
+      - name: body
+        in: body
+        description: User login credentials
+        required: true
+        schema:
+          $ref: '#/definitions/authCredentials'
+      responses:
+        200:
+          description: 'OK - Login successful'
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      email:
+                        type: string
+                        example: "user@mail.com"
+              message:
+                type: string
+                example: 'Login successful'
+          headers:
+            Set-Cookie:
+              type: string
+              description: JWT token set as HttpOnly cookie
+              example: "Authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; HttpOnly; Path=/"
+        400:
+          description: 'Bad Request - Invalid credentials format'
+        401:
+          description: 'Unauthorized - Invalid email or password'
+        500:
+          description: 'Server Error'
+
+# [POST] logout
+  /logout:
+    post:
+      tags:
+      - auth
+      summary: User Logout
+      description: Logout user and clear authentication token
+      responses:
+        200:
+          description: 'OK - Logout successful'
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Logout successful'
+          headers:
+            Set-Cookie:
+              type: string
+              description: Clear the Authorization cookie
+              example: "Authorization=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT"
+        500:
+          description: 'Server Error'
+
+# [GET] users
+  /users:
+    get:
+      tags:
+      - users
+      summary: Find All Users
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+
+# [POST] users
+    post:
+      tags:
+      - users
+      summary: Add User
+      parameters:
+      - name: body
+        in: body
+        description: user Data
+        required: true
+        schema:
+          $ref: '#/definitions/users'
+      responses:
+        201:
+          description: 'Created'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+# [GET] users/id
+  /users/{id}:
+    get:
+      tags:
+      - users
+      summary: Find User By Id
+      parameters:
+      - name: id
+        in: path
+        description: User Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 'OK'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+# [PUT] users/id
+    put:
+      tags:
+      - users
+      summary: Update User By Id
+      parameters:
+      - name: id
+        in: path
+        description: user Id
+        required: true
+        type: integer
+      - name: body
+        in: body
+        description: user Data
+        required: true
+        schema:
+          $ref: '#/definitions/users'
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+# [DELETE] users/id
+    delete:
+      tags:
+      - users
+      summary: Delete User By Id
+      parameters:
+      - name: id
+        in: path
+        description: user Id
+        required: true
+        type: integer
+      responses:
+        200:
+          description: 'OK'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+# [GET] books
+  /books:
+    get:
+      tags:
+      - books
+      summary: Find All Books
+      description: Retrieve all books with optional search by title, author, or genre
+      parameters:
+      - name: title
+        in: query
+        description: Search books by title (partial match)
+        required: false
+        type: string
+      - name: author
+        in: query
+        description: Search books by author (partial match)
+        required: false
+        type: string
+      - name: genre
+        in: query
+        description: Search books by genre (partial match)
+        required: false
+        type: string
+      responses:
+        200:
+          description: 'OK'
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/book'
+              message:
+                type: string
+                example: 'findAll'
+        500:
+          description: 'Server Error'
+
+# [POST] books
+    post:
+      tags:
+      - books
+      summary: Create Book
+      description: Create a new book (requires authentication)
+      parameters:
+      - name: body
+        in: body
+        description: Book Data
+        required: true
+        schema:
+          $ref: '#/definitions/createBook'
+      responses:
+        201:
+          description: 'Created'
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/definitions/book'
+              message:
+                type: string
+                example: 'created'
+        400:
+          description: 'Bad Request - Validation Error'
+        401:
+          description: 'Unauthorized'
+        409:
+          description: 'Conflict - Book already exists'
+        500:
+          description: 'Server Error'
+
+# [GET] books/id
+  /books/{id}:
+    get:
+      tags:
+      - books
+      summary: Find Book By Id
+      description: Retrieve a specific book by its ID
+      parameters:
+      - name: id
+        in: path
+        description: Book Id
+        required: true
+        type: integer
+        minimum: 1
+      responses:
+        200:
+          description: 'OK'
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/definitions/book'
+              message:
+                type: string
+                example: 'findOne'
+        400:
+          description: 'Bad Request - Invalid ID'
+        404:
+          description: 'Not Found - Book not found'
+        500:
+          description: 'Server Error'
+
+# [GET] shopping-cart
+  /shopping-cart:
+    get:
+      tags:
+      - shopping-cart
+      summary: Get Shopping Cart
+      description: Retrieve the current user's shopping cart with all items
+      security:
+      - BearerAuth: []
+      responses:
+        200:
+          description: 'OK'
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  user_id:
+                    type: integer
+                    example: 1
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/definitions/shoppingCartItem'
+              message:
+                type: string
+                example: 'Shopping cart retrieved successfully'
+        401:
+          description: 'Unauthorized'
+        500:
+          description: 'Server Error'
+
+# [POST] shopping-cart
+    post:
+      tags:
+      - shopping-cart
+      summary: Add Book to Shopping Cart
+      description: Add a book to the current user's shopping cart (requires authentication)
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: body
+        in: body
+        description: Book to add to cart
+        required: true
+        schema:
+          $ref: '#/definitions/addBookToCart'
+      responses:
+        200:
+          description: 'OK'
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/definitions/shoppingCartItem'
+              message:
+                type: string
+                example: 'Book added to shopping cart successfully'
+        400:
+          description: 'Bad Request - Validation Error'
+        401:
+          description: 'Unauthorized'
+        500:
+          description: 'Server Error'
+
+# [POST] order
+  /order:
+    post:
+      tags:
+      - orders
+      summary: Create Order
+      description: Create a new order from the user's shopping cart (requires authentication)
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: body
+        in: body
+        description: Order creation data
+        required: true
+        schema:
+          $ref: '#/definitions/createOrder'
+      responses:
+        201:
+          description: 'Created - Order created successfully'
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/definitions/order'
+              message:
+                type: string
+                example: 'created'
+        400:
+          description: 'Bad Request - Validation Error'
+        401:
+          description: 'Unauthorized'
+        500:
+          description: 'Server Error - Shopping cart empty or insufficient stock'
+
+# [GET] order/history
+  /order/history:
+    get:
+      tags:
+      - orders
+      summary: Get Order History
+      description: Retrieve the current user's order history (requires authentication)
+      security:
+      - BearerAuth: []
+      responses:
+        200:
+          description: 'OK - Order history retrieved successfully'
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/orderWithItems'
+              message:
+                type: string
+                example: 'Order history retrieved'
+        401:
+          description: 'Unauthorized'
+        500:
+          description: 'Server Error'
+
+# [PATCH] order/id/pay
+  /order/{id}/pay:
+    patch:
+      tags:
+      - orders
+      summary: Mark Order as Paid
+      description: Mark an order as paid and create a transaction record (requires authentication)
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        description: Order ID
+        required: true
+        type: integer
+        minimum: 1
+      responses:
+        200:
+          description: 'OK - Order marked as paid successfully'
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/definitions/orderWithTransaction'
+              message:
+                type: string
+                example: 'Order marked as paid successfully'
+        400:
+          description: 'Bad Request - Invalid order ID'
+        401:
+          description: 'Unauthorized'
+        404:
+          description: 'Not Found - Order not found'
+        409:
+          description: 'Conflict - Order already marked as paid'
+        500:
+          description: 'Server Error'
+
+# Security definitions
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: JWT token passed in Authorization header or as cookie
+
+# definitions
+definitions:
+  authCredentials:
+    type: object
+    required:
+      - email
+      - password
+    properties:
+      email:
+        type: string
+        format: email
+        description: User email address
+        example: "user@mail.com"
+      password:
+        type: string
+        description: User password
+        minLength: 6
+        example: "password1"
+
+  users:
+    type: object
+    required:
+        - email
+        - password
+    properties:
+      email:
+        type: string
+        description: user Email
+      password:
+        type: string
+        description: user Password
+
+  book:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Book ID
+        example: 1
+      title:
+        type: string
+        description: Book title
+        example: "The Great Gatsby"
+      author:
+        type: string
+        description: Book author
+        example: "F. Scott Fitzgerald"
+      genre:
+        type: string
+        description: Book genre
+        example: "Classic"
+      is_available:
+        type: boolean
+        description: Book availability status
+        example: true
+      price:
+        type: number
+        description: Book price in cents
+        example: 1500
+      stock_quantity:
+        type: integer
+        description: Number of books in stock
+        example: 10
+      description:
+        type: string
+        description: Book description
+        example: "A story of the fabulously wealthy Jay Gatsby and his love for the beautiful Daisy Buchanan."
+      createdAt:
+        type: string
+        format: date-time
+        description: Creation timestamp
+      updatedAt:
+        type: string
+        format: date-time
+        description: Last update timestamp
+
+  createBook:
+    type: object
+    required:
+      - title
+      - author
+      - genre
+      - price
+      - stock_quantity
+      - description
+    properties:
+      title:
+        type: string
+        description: Book title (1-255 characters)
+        minLength: 1
+        maxLength: 255
+        example: "The Great Gatsby"
+      author:
+        type: string
+        description: Book author (1-255 characters)
+        minLength: 1
+        maxLength: 255
+        example: "F. Scott Fitzgerald"
+      genre:
+        type: string
+        description: Book genre (1-100 characters)
+        minLength: 1
+        maxLength: 100
+        example: "Classic"
+      price:
+        type: number
+        description: Book price in cents (0-999999)
+        minimum: 0
+        maximum: 999999
+        example: 1500
+      stock_quantity:
+        type: integer
+        description: Number of books in stock (0-999999)
+        minimum: 0
+        maximum: 999999
+        example: 10
+      description:
+        type: string
+        description: Book description (10-1000 characters)
+        minLength: 10
+        maxLength: 1000
+        example: "A story of the fabulously wealthy Jay Gatsby and his love for the beautiful Daisy Buchanan."
+
+  addBookToCart:
+    type: object
+    required:
+      - book_id
+    properties:
+      book_id:
+        type: integer
+        description: Book ID to add to cart
+        minimum: 1
+        example: 1
+
+  shoppingCartItem:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Shopping cart item ID
+        example: 1
+      shopping_cart_id:
+        type: integer
+        description: Shopping cart ID
+        example: 1
+      book_id:
+        type: integer
+        description: Book ID
+        example: 1
+      quantity:
+        type: integer
+        description: Quantity of books
+        example: 2
+      book:
+        $ref: '#/definitions/book'
+      createdAt:
+        type: string
+        format: date-time
+        description: Creation timestamp
+      updatedAt:
+        type: string
+        format: date-time
+        description: Last update timestamp
+
+  createOrder:
+    type: object
+    required:
+      - user_id
+    properties:
+      user_id:
+        type: integer
+        description: User ID (automatically set from authenticated user)
+        minimum: 1
+        example: 1
+      order_date:
+        type: string
+        format: date-time
+        description: Order date (optional, defaults to current date)
+        example: "2024-01-15T10:30:00Z"
+
+  order:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Order ID
+        example: 1
+      user_id:
+        type: integer
+        description: User ID
+        example: 1
+      order_date:
+        type: string
+        format: date-time
+        description: Order date
+        example: "2024-01-15T10:30:00Z"
+      total_amount:
+        type: number
+        description: Total order amount in cents
+        example: 4200
+      status:
+        type: string
+        enum: [pending, paid, cancelled]
+        description: Order status
+        example: "pending"
+      createdAt:
+        type: string
+        format: date-time
+        description: Creation timestamp
+      updatedAt:
+        type: string
+        format: date-time
+        description: Last update timestamp
+
+  orderItem:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Order item ID
+        example: 1
+      order_id:
+        type: integer
+        description: Order ID
+        example: 1
+      book_id:
+        type: integer
+        description: Book ID
+        example: 1
+      quantity:
+        type: integer
+        description: Quantity of books
+        example: 2
+      price_at_purchase:
+        type: number
+        description: Book price at time of purchase in cents
+        example: 1500
+      book:
+        $ref: '#/definitions/book'
+
+  orderWithItems:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Order ID
+        example: 1
+      user_id:
+        type: integer
+        description: User ID
+        example: 1
+      order_date:
+        type: string
+        format: date-time
+        description: Order date
+        example: "2024-01-15T10:30:00Z"
+      total_amount:
+        type: number
+        description: Total order amount in cents
+        example: 4200
+      status:
+        type: string
+        enum: [pending, paid, cancelled]
+        description: Order status
+        example: "pending"
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/orderItem'
+      createdAt:
+        type: string
+        format: date-time
+        description: Creation timestamp
+      updatedAt:
+        type: string
+        format: date-time
+        description: Last update timestamp
+
+  transaction:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Transaction ID
+        example: 1
+      user_id:
+        type: integer
+        description: User ID
+        example: 1
+      order_id:
+        type: integer
+        description: Order ID
+        example: 1
+      reference_id:
+        type: string
+        description: Transaction reference ID
+        example: "TXN-1705312200000-1"
+      amount:
+        type: number
+        description: Transaction amount in cents
+        example: 4200
+      status:
+        type: string
+        enum: [successful, failed, pending]
+        description: Transaction status
+        example: "successful"
+      createdAt:
+        type: string
+        format: date-time
+        description: Creation timestamp
+      updatedAt:
+        type: string
+        format: date-time
+        description: Last update timestamp
+
+  orderWithTransaction:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Order ID
+        example: 1
+      user_id:
+        type: integer
+        description: User ID
+        example: 1
+      order_date:
+        type: string
+        format: date-time
+        description: Order date
+        example: "2024-01-15T10:30:00Z"
+      total_amount:
+        type: number
+        description: Total order amount in cents
+        example: 4200
+      status:
+        type: string
+        enum: [pending, paid, cancelled]
+        description: Order status
+        example: "paid"
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/orderItem'
+      transaction:
+        $ref: '#/definitions/transaction'
+      createdAt:
+        type: string
+        format: date-time
+        description: Creation timestamp
+      updatedAt:
+        type: string
+        format: date-time
+        description: Last update timestamp
+
+schemes:
+ - https
+ - http
