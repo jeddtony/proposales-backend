@@ -3,6 +3,7 @@ import { Container } from 'typedi';
 import { CreateProposalRequestDto } from '@dtos/proposalRequest.dto';
 import { ProposalRequest } from '@interfaces/proposalRequest.interface';
 import { ProposalRequestService } from '@services/proposalRequest.service';
+import { generateExperienceSummary } from '@utils/proposalAI';
 
 export class ProposalRequestController {
   public proposalRequestService = Container.get(ProposalRequestService);
@@ -32,6 +33,18 @@ export class ProposalRequestController {
       const created: ProposalRequest = await this.proposalRequestService.createProposalRequest(data);
 
       res.status(201).json({ data: created, message: 'Proposal request submitted successfully' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public generateExperienceSummary = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = Number(req.params.id);
+      const proposalRequest: ProposalRequest = await this.proposalRequestService.getProposalRequestById(id);
+      const summary = await generateExperienceSummary(proposalRequest);
+
+      res.status(200).json({ data: { summary }, message: 'Experience summary generated successfully' });
     } catch (error) {
       next(error);
     }

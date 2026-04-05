@@ -9,3 +9,4 @@ export const { PROPOSALES_API_KEY } = process.env;
 export const { LLM_PROVIDER, OPENAI_API_KEY, HUGGINGFACE_API_KEY, VERCEL_AI_API_KEY, ANTHROPIC_API_KEY } = process.env;
 export const { GEMINI_API_KEY, IMAGE_OUTPUT_DIR = 'generated-images', NANOBANANA_MODEL = 'gemini-2.5-flash-image' } = process.env;
 export const { UPLOADCARE_PUB_KEY } = process.env;
+export const { PROPOSALES_COMPANY_ID } = process.env;

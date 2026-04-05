@@ -8,6 +8,7 @@ import OrderModel from '@models/order.model';
 import OrderItemsModel from '@models/orderItems.model';
 import TransactionModel from '@models/transaction.model';
 import ProposalRequestModel from '@models/proposalRequest.model';
+import ProposalChatModel from '@models/proposalChat.model';
 import { logger } from '@utils/logger';
 
 const sequelize = new Sequelize.Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
@@ -43,6 +44,7 @@ const Order = OrderModel(sequelize);
 const OrderItems = OrderItemsModel(sequelize);
 const Transaction = TransactionModel(sequelize);
 const ProposalRequest = ProposalRequestModel(sequelize);
+const ProposalChat = ProposalChatModel(sequelize);
 
 // Model relationships are listed here
 Users.hasOne(ShoppingCart, { foreignKey: 'user_id', sourceKey: 'id' });
@@ -62,6 +64,9 @@ OrderItems.belongsTo(Books, { foreignKey: 'book_id', targetKey: 'id', as: 'book'
 Transaction.belongsTo(Order, { foreignKey: 'order_id', targetKey: 'id', as: 'order' });
 Order.hasOne(Transaction, { foreignKey: 'order_id', sourceKey: 'id', as: 'transaction' });
 
+ProposalRequest.hasMany(ProposalChat, { foreignKey: 'proposal_request_id', sourceKey: 'id', as: 'chats' });
+ProposalChat.belongsTo(ProposalRequest, { foreignKey: 'proposal_request_id', targetKey: 'id', as: 'proposalRequest' });
+
 export const DB = {
   Users,
   Books,
@@ -71,6 +76,7 @@ export const DB = {
   OrderItems,
   Transaction,
   ProposalRequest,
+  ProposalChat,
   sequelize,
   Sequelize,
 };
