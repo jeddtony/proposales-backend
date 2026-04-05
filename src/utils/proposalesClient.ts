@@ -16,12 +16,22 @@ export interface Company {
   website_url: string;
 }
 
-export interface ProposalRecipient {
-  id?: number;
-  name?: string;
-  email?: string;
-  phone?: string;
-}
+export type ProposalRecipient =
+  | { id: number }
+  | {
+      first_name?: string;
+      last_name?: string;
+      email?: string;
+      phone?: string;
+      company_name?: string;
+      sources?: {
+        integration?: {
+          id: number;
+          contactId: string;
+          metadata: Record<string, unknown>;
+        };
+      };
+    };
 
 export interface ProposalBlock {
   [key: string]: unknown;
@@ -154,20 +164,37 @@ export interface CreateRfpParams {
 
 // --- HTTP helper ---
 
-function httpsRequest<T>(options: https.RequestOptions, body?: string): Promise<T> {
+function httpsRequest<T>(options: https.RequestOptions, body?: string, redirectCount = 0): Promise<T> {
   return new Promise((resolve, reject) => {
     const req = https.request(options, res => {
+      const status = res.statusCode ?? 0;
+
+      if ((status === 301 || status === 302 || status === 307 || status === 308) && res.headers.location) {
+        if (redirectCount >= 5) return reject(new Error('Too many redirects'));
+        const redirectUrl = new URL(res.headers.location);
+        const redirectOptions: https.RequestOptions = {
+          ...options,
+          hostname: redirectUrl.hostname,
+          path: redirectUrl.pathname + redirectUrl.search,
+        };
+        return resolve(httpsRequest<T>(redirectOptions, body, redirectCount + 1));
+      }
+
       let raw = '';
       res.on('data', chunk => (raw += chunk));
       res.on('end', () => {
+        if (!raw.trim()) {
+          if (status >= 200 && status < 300) return resolve({} as T);
+          return reject(new Error(`API error ${status}: empty response`));
+        }
+
         let json: unknown;
         try {
           json = JSON.parse(raw);
         } catch {
-          return reject(new Error(`Failed to parse response: ${raw}`));
+          return reject(new Error(`Failed to parse response (status ${status}): ${raw}`));
         }
 
-        const status = res.statusCode ?? 0;
         if (status >= 200 && status < 300) {
           resolve(json as T);
         } else {
@@ -194,7 +221,8 @@ export class ProposalesClient {
   }
 
   private buildOptions(method: string, path: string, query?: Record<string, string>): https.RequestOptions {
-    let fullPath = `${BASE_PATH}${path}`;
+    const versionedPath = /^\/v\d+\//.test(path) ? path : `${BASE_PATH}${path}`;
+    let fullPath = versionedPath;
 
     if (query && Object.keys(query).length > 0) {
       fullPath += `?${new URLSearchParams(query).toString()}`;
@@ -226,11 +254,11 @@ export class ProposalesClient {
   // --- Proposals ---
 
   createProposal(params: CreateProposalParams): Promise<{ proposal: { uuid: string; url: string } }> {
-    return this.request('POST', '/proposals', { body: params });
+    return this.request('POST', '/v3/proposals', { body: params });
   }
 
   getProposal(uuid: string): Promise<{ data: Proposal }> {
-    return this.request('GET', `/proposals/${uuid}`);
+    return this.request('GET', `/v3/proposals/${uuid}`);
   }
 
   patchProposalData(uuid: string, data: Record<string, unknown>): Promise<{ data: Record<string, unknown> }> {

@@ -8,6 +8,7 @@ export class ProposalRequestModel extends Model<ProposalRequest> implements Prop
   public phone_number: string;
   public company_name: string;
   public details: string;
+  public proposal_uuid?: string | null;
   public created_at?: Date;
   public updated_at?: Date;
 }
@@ -39,6 +40,11 @@ export default function (sequelize: Sequelize): typeof ProposalRequestModel {
       details: {
         type: DataTypes.TEXT,
         allowNull: false,
+      },
+      proposal_uuid: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null,
       },
     },
     {
