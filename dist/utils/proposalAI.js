@@ -1,14 +1,7 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-Object.defineProperty(exports, "generateExperienceSummary", {
-    enumerable: true,
-    get: function() {
-        return generateExperienceSummary;
-    }
-});
-const _llm = require("./llm");
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateExperienceSummary = void 0;
+const llm_1 = require("@utils/llm");
 const SYSTEM_PROMPT = `You are an expert event and proposal consultant.
 When given details about a client's request for proposal (RFP), you generate a compelling, structured experience overview that:
 - Describes the kind of experience the client is expecting
@@ -28,17 +21,11 @@ Details / RFP: ${proposalRequest.details}
 
 Based on the above, generate a compelling event experience overview and proposal summary.
   `.trim();
-    const response = await _llm.llm.chat([
-        {
-            role: 'system',
-            content: SYSTEM_PROMPT
-        },
-        {
-            role: 'user',
-            content: userMessage
-        }
+    const response = await llm_1.llm.chat([
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: userMessage },
     ]);
     return response.text;
 }
-
+exports.generateExperienceSummary = generateExperienceSummary;
 //# sourceMappingURL=proposalAI.js.map

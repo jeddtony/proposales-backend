@@ -146,6 +146,15 @@ export interface CreateContentParams {
   images?: ContentImage[];
 }
 
+export interface UpdateContentParams {
+  variation_id?: number;
+  product_id?: number;
+  language: string;
+  title?: string;
+  description?: string;
+  images?: ContentImage[];
+}
+
 export interface CreateRfpParams {
   email: string;
   company_id?: number;
@@ -294,7 +303,18 @@ export class ProposalesClient {
   }
 
   createContent(params: CreateContentParams): Promise<{ data: { product_id: number; variation_id: number; message: string } }> {
-    return this.request('POST', '/content', { body: params });
+    return this.request('POST', '/v3/content', { body: params });
+  }
+
+  updateContent(params: UpdateContentParams): Promise<{ data: { product_id: number; variation_id: number; message: string } }> {
+    return this.request('PUT', '/v3/content', { body: params });
+  }
+
+  deleteContent(params: { product_id?: number; variation_id?: number }): Promise<{ data: { success: boolean; message: string } }> {
+    const query: Record<string, string> = {};
+    if (params.product_id !== undefined) query.product_id = String(params.product_id);
+    if (params.variation_id !== undefined) query.variation_id = String(params.variation_id);
+    return this.request('DELETE', '/v3/content', { query });
   }
 
   // --- Attachments ---

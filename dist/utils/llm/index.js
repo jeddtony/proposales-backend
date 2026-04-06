@@ -1,47 +1,24 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-function _export(target, all) {
-    for(var name in all)Object.defineProperty(target, name, {
-        enumerable: true,
-        get: Object.getOwnPropertyDescriptor(all, name).get
-    });
-}
-_export(exports, {
-    get LLMMessage () {
-        return _llminterface.LLMMessage;
-    },
-    get LLMProvider () {
-        return _llminterface.LLMProvider;
-    },
-    get LLMResponse () {
-        return _llminterface.LLMResponse;
-    },
-    get llm () {
-        return llm;
-    }
-});
-const _config = require("../../config");
-const _openaiProvider = require("./openaiProvider");
-const _huggingFaceProvider = require("./huggingFaceProvider");
-const _vercelAIProvider = require("./vercelAIProvider");
-const _claudeProvider = require("./claudeProvider");
-const _llminterface = require("../../interfaces/llm.interface");
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.llm = void 0;
+const _config_1 = require("@config");
+const openaiProvider_1 = require("./openaiProvider");
+const huggingFaceProvider_1 = require("./huggingFaceProvider");
+const vercelAIProvider_1 = require("./vercelAIProvider");
+const claudeProvider_1 = require("./claudeProvider");
 function createLLMProvider() {
-    switch(_config.LLM_PROVIDER){
+    switch (_config_1.LLM_PROVIDER) {
         case 'openai':
-            return new _openaiProvider.OpenAIProvider();
+            return new openaiProvider_1.OpenAIProvider();
         case 'huggingface':
-            return new _huggingFaceProvider.HuggingFaceProvider();
+            return new huggingFaceProvider_1.HuggingFaceProvider();
         case 'vercel-ai':
-            return new _vercelAIProvider.VercelAIProvider();
+            return new vercelAIProvider_1.VercelAIProvider();
         case 'claude':
-            return new _claudeProvider.ClaudeProvider();
+            return new claudeProvider_1.ClaudeProvider();
         default:
-            throw new Error(`Unknown LLM_PROVIDER "${_config.LLM_PROVIDER}". Valid options: openai, huggingface, vercel-ai, claude`);
+            throw new Error(`Unknown LLM_PROVIDER "${_config_1.LLM_PROVIDER}". Valid options: openai, huggingface, vercel-ai, claude`);
     }
 }
-const llm = createLLMProvider();
-
+exports.llm = createLLMProvider();
 //# sourceMappingURL=index.js.map

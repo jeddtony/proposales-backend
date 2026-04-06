@@ -1,41 +1,21 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-Object.defineProperty(exports, "OrderRoute", {
-    enumerable: true,
-    get: function() {
-        return OrderRoute;
-    }
-});
-const _express = require("express");
-const _ordercontroller = require("../controllers/order.controller");
-const _authmiddleware = require("../middlewares/auth.middleware");
-function _define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-let OrderRoute = class OrderRoute {
-    initializeRoutes() {
-        this.router.post(`${this.path}`, _authmiddleware.AuthMiddleware, this.order.createOrder);
-        this.router.get(`${this.path}/history`, _authmiddleware.AuthMiddleware, this.order.getOrderHistory);
-        this.router.patch(`${this.path}/:id/pay`, _authmiddleware.AuthMiddleware, this.order.markOrderAsPaid);
-    }
-    constructor(){
-        _define_property(this, "path", '/order');
-        _define_property(this, "router", (0, _express.Router)());
-        _define_property(this, "order", new _ordercontroller.OrderController());
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.OrderRoute = void 0;
+const express_1 = require("express");
+const order_controller_1 = require("@controllers/order.controller");
+const auth_middleware_1 = require("@middlewares/auth.middleware");
+class OrderRoute {
+    constructor() {
+        this.path = '/order';
+        this.router = (0, express_1.Router)();
+        this.order = new order_controller_1.OrderController();
         this.initializeRoutes();
     }
-};
-
+    initializeRoutes() {
+        this.router.post(`${this.path}`, auth_middleware_1.AuthMiddleware, this.order.createOrder);
+        this.router.get(`${this.path}/history`, auth_middleware_1.AuthMiddleware, this.order.getOrderHistory);
+        this.router.patch(`${this.path}/:id/pay`, auth_middleware_1.AuthMiddleware, this.order.markOrderAsPaid);
+    }
+}
+exports.OrderRoute = OrderRoute;
 //# sourceMappingURL=order.route.js.map

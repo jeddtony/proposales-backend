@@ -1,96 +1,16 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-function _export(target, all) {
-    for(var name in all)Object.defineProperty(target, name, {
-        enumerable: true,
-        get: Object.getOwnPropertyDescriptor(all, name).get
-    });
-}
-_export(exports, {
-    get ANTHROPIC_API_KEY () {
-        return ANTHROPIC_API_KEY;
-    },
-    get CREDENTIALS () {
-        return CREDENTIALS;
-    },
-    get DB_DATABASE () {
-        return DB_DATABASE;
-    },
-    get DB_HOST () {
-        return DB_HOST;
-    },
-    get DB_PASSWORD () {
-        return DB_PASSWORD;
-    },
-    get DB_PORT () {
-        return DB_PORT;
-    },
-    get DB_USER () {
-        return DB_USER;
-    },
-    get GEMINI_API_KEY () {
-        return GEMINI_API_KEY;
-    },
-    get HUGGINGFACE_API_KEY () {
-        return HUGGINGFACE_API_KEY;
-    },
-    get IMAGE_OUTPUT_DIR () {
-        return IMAGE_OUTPUT_DIR;
-    },
-    get LLM_PROVIDER () {
-        return LLM_PROVIDER;
-    },
-    get LOG_DIR () {
-        return LOG_DIR;
-    },
-    get LOG_FORMAT () {
-        return LOG_FORMAT;
-    },
-    get NANOBANANA_MODEL () {
-        return NANOBANANA_MODEL;
-    },
-    get NODE_ENV () {
-        return NODE_ENV;
-    },
-    get OPENAI_API_KEY () {
-        return OPENAI_API_KEY;
-    },
-    get ORIGIN () {
-        return ORIGIN;
-    },
-    get PORT () {
-        return PORT;
-    },
-    get PROPOSALES_API_KEY () {
-        return PROPOSALES_API_KEY;
-    },
-    get PROPOSALES_COMPANY_ID () {
-        return PROPOSALES_COMPANY_ID;
-    },
-    get SECRET_KEY () {
-        return SECRET_KEY;
-    },
-    get UPLOADCARE_PUB_KEY () {
-        return UPLOADCARE_PUB_KEY;
-    },
-    get VERCEL_AI_API_KEY () {
-        return VERCEL_AI_API_KEY;
-    }
-});
-const _dotenv = require("dotenv");
-(0, _dotenv.config)({
-    path: `.env.${process.env.NODE_ENV || 'development'}.local`
-});
-const CREDENTIALS = process.env.CREDENTIALS === 'true';
-const { NODE_ENV, PORT, SECRET_KEY, LOG_FORMAT, LOG_DIR, ORIGIN } = process.env;
-const { DB_USER, DB_PASSWORD, DB_HOST, DB_DATABASE } = process.env;
-const DB_PORT = process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306;
-const { PROPOSALES_API_KEY } = process.env;
-const { LLM_PROVIDER, OPENAI_API_KEY, HUGGINGFACE_API_KEY, VERCEL_AI_API_KEY, ANTHROPIC_API_KEY } = process.env;
-const { GEMINI_API_KEY, IMAGE_OUTPUT_DIR = 'generated-images', NANOBANANA_MODEL = 'gemini-2.5-flash-image' } = process.env;
-const { UPLOADCARE_PUB_KEY } = process.env;
-const { PROPOSALES_COMPANY_ID } = process.env;
-
+var _a, _b, _c, _d, _e, _f;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PROPOSALES_COMPANY_ID = exports.UPLOADCARE_PUB_KEY = exports.NANOBANANA_MODEL = exports.IMAGE_OUTPUT_DIR = exports.GEMINI_API_KEY = exports.ANTHROPIC_API_KEY = exports.VERCEL_AI_API_KEY = exports.HUGGINGFACE_API_KEY = exports.OPENAI_API_KEY = exports.LLM_PROVIDER = exports.PROPOSALES_API_KEY = exports.DB_PORT = exports.DB_DATABASE = exports.DB_HOST = exports.DB_PASSWORD = exports.DB_USER = exports.ORIGIN = exports.LOG_DIR = exports.LOG_FORMAT = exports.SECRET_KEY = exports.PORT = exports.NODE_ENV = exports.CREDENTIALS = void 0;
+const dotenv_1 = require("dotenv");
+(0, dotenv_1.config)({ path: `.env.${process.env.NODE_ENV || 'development'}.local` });
+exports.CREDENTIALS = process.env.CREDENTIALS === 'true';
+_a = process.env, exports.NODE_ENV = _a.NODE_ENV, exports.PORT = _a.PORT, exports.SECRET_KEY = _a.SECRET_KEY, exports.LOG_FORMAT = _a.LOG_FORMAT, exports.LOG_DIR = _a.LOG_DIR, exports.ORIGIN = _a.ORIGIN;
+_b = process.env, exports.DB_USER = _b.DB_USER, exports.DB_PASSWORD = _b.DB_PASSWORD, exports.DB_HOST = _b.DB_HOST, exports.DB_DATABASE = _b.DB_DATABASE;
+exports.DB_PORT = process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306;
+exports.PROPOSALES_API_KEY = process.env.PROPOSALES_API_KEY;
+_c = process.env, exports.LLM_PROVIDER = _c.LLM_PROVIDER, exports.OPENAI_API_KEY = _c.OPENAI_API_KEY, exports.HUGGINGFACE_API_KEY = _c.HUGGINGFACE_API_KEY, exports.VERCEL_AI_API_KEY = _c.VERCEL_AI_API_KEY, exports.ANTHROPIC_API_KEY = _c.ANTHROPIC_API_KEY;
+_d = process.env, exports.GEMINI_API_KEY = _d.GEMINI_API_KEY, _e = _d.IMAGE_OUTPUT_DIR, exports.IMAGE_OUTPUT_DIR = _e === void 0 ? 'generated-images' : _e, _f = _d.NANOBANANA_MODEL, exports.NANOBANANA_MODEL = _f === void 0 ? 'gemini-2.5-flash-image' : _f;
+exports.UPLOADCARE_PUB_KEY = process.env.UPLOADCARE_PUB_KEY;
+exports.PROPOSALES_COMPANY_ID = process.env.PROPOSALES_COMPANY_ID;
 //# sourceMappingURL=index.js.map

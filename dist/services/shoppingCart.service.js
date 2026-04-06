@@ -1,44 +1,26 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-Object.defineProperty(exports, "default", {
-    enumerable: true,
-    get: function() {
-        return _default;
+Object.defineProperty(exports, "__esModule", { value: true });
+const _database_1 = require("@database");
+class ShoppingCartService {
+    constructor() {
+        this.shoppingCart = _database_1.DB.ShoppingCart;
+        this.shoppingCartItems = _database_1.DB.ShoppingCartItems;
     }
-});
-const _database = require("../database");
-function _define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-let ShoppingCartService = class ShoppingCartService {
     async getShoppingCart(userId) {
         const shoppingCart = await this.shoppingCart.findOne({
-            where: {
-                user_id: userId
-            },
+            where: { user_id: userId },
             include: [
                 {
                     model: this.shoppingCartItems,
-                    as: 'items'
-                }
-            ]
+                    as: 'items',
+                },
+            ],
         });
         return shoppingCart;
     }
     async addBookToShoppingCart(shoppingCartData) {
-        const book = await _database.DB.Books.findByPk(shoppingCartData.book_id);
+        // Check if book exists and is available
+        const book = await _database_1.DB.Books.findByPk(shoppingCartData.book_id);
         if (!book) {
             throw new Error(`Book with ID ${shoppingCartData.book_id} not found`);
         }
@@ -48,37 +30,32 @@ let ShoppingCartService = class ShoppingCartService {
         if (book.stock_quantity <= 0) {
             throw new Error(`Book "${book.title}" is out of stock`);
         }
+        // Check if user has a shopping cart
         let userCart = await this.shoppingCart.findOne({
-            where: {
-                user_id: shoppingCartData.user_id
-            }
+            where: { user_id: shoppingCartData.user_id },
         });
+        // If no cart exists, create one
         if (!userCart) {
-            userCart = await this.shoppingCart.create({
-                user_id: shoppingCartData.user_id
-            });
+            userCart = await this.shoppingCart.create({ user_id: shoppingCartData.user_id });
         }
+        // Check if book is already in the cart
         const existingCartItem = await this.shoppingCartItems.findOne({
             where: {
                 shopping_cart_id: userCart.id,
-                book_id: shoppingCartData.book_id
-            }
+                book_id: shoppingCartData.book_id,
+            },
         });
         if (existingCartItem) {
             throw new Error(`Book "${book.title}" is already in your shopping cart`);
         }
+        // Add book to shopping cart
         await this.shoppingCartItems.create({
             shopping_cart_id: userCart.id,
             book_id: shoppingCartData.book_id,
-            quantity: 1
+            quantity: 1,
         });
         return userCart;
     }
-    constructor(){
-        _define_property(this, "shoppingCart", _database.DB.ShoppingCart);
-        _define_property(this, "shoppingCartItems", _database.DB.ShoppingCartItems);
-    }
-};
-const _default = ShoppingCartService;
-
+}
+exports.default = ShoppingCartService;
 //# sourceMappingURL=shoppingCart.service.js.map

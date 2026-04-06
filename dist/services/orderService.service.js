@@ -1,71 +1,21 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-Object.defineProperty(exports, "default", {
-    enumerable: true,
-    get: function() {
-        return _default;
+Object.defineProperty(exports, "__esModule", { value: true });
+const order_interface_1 = require("@interfaces/order.interface");
+const _database_1 = require("@database");
+const transaction_interface_1 = require("@interfaces/transaction.interface");
+class OrderService {
+    constructor() {
+        this.order = _database_1.DB.Order;
+        this.orderItems = _database_1.DB.OrderItems;
+        this.shoppingCart = _database_1.DB.ShoppingCart;
+        this.shoppingCartItems = _database_1.DB.ShoppingCartItems;
     }
-});
-const _orderinterface = require("../interfaces/order.interface");
-const _database = require("../database");
-const _transactioninterface = require("../interfaces/transaction.interface");
-function _define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-function _object_spread(target) {
-    for(var i = 1; i < arguments.length; i++){
-        var source = arguments[i] != null ? arguments[i] : {};
-        var ownKeys = Object.keys(source);
-        if (typeof Object.getOwnPropertySymbols === "function") {
-            ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function(sym) {
-                return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-            }));
-        }
-        ownKeys.forEach(function(key) {
-            _define_property(target, key, source[key]);
-        });
-    }
-    return target;
-}
-function ownKeys(object, enumerableOnly) {
-    var keys = Object.keys(object);
-    if (Object.getOwnPropertySymbols) {
-        var symbols = Object.getOwnPropertySymbols(object);
-        if (enumerableOnly) {
-            symbols = symbols.filter(function(sym) {
-                return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-            });
-        }
-        keys.push.apply(keys, symbols);
-    }
-    return keys;
-}
-function _object_spread_props(target, source) {
-    source = source != null ? source : {};
-    if (Object.getOwnPropertyDescriptors) {
-        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-        ownKeys(Object(source)).forEach(function(key) {
-            Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-        });
-    }
-    return target;
-}
-let OrderService = class OrderService {
+    /**
+     * Creates a new order from the user's shopping cart
+     * @returns {Promise<Order>} The created order
+     */
     async createOrder(orderData) {
-        const transaction = await _database.DB.sequelize.transaction();
+        const transaction = await _database_1.DB.sequelize.transaction();
         try {
             const shoppingCart = await this.getShoppingCart(orderData.user_id);
             const cartItems = await this.getCartItems(shoppingCart.id);
@@ -76,68 +26,76 @@ let OrderService = class OrderService {
             await this.clearShoppingCart(shoppingCart.id);
             await transaction.commit();
             return order;
-        } catch (error) {
+        }
+        catch (error) {
             await transaction.rollback();
             throw error;
         }
     }
+    /**
+     * Gets the shopping cart for a user
+     * @returns {Promise<any>} The shopping cart record
+     */
     async getShoppingCart(userId) {
-        const shoppingCart = await this.shoppingCart.findOne({
-            where: {
-                user_id: userId
-            }
-        });
+        const shoppingCart = await this.shoppingCart.findOne({ where: { user_id: userId } });
         if (!shoppingCart) {
             throw new Error('Shopping cart not found');
         }
         return shoppingCart;
     }
+    /**
+     * Gets all items in a shopping cart
+     * @returns {Promise<any[]>} Array of cart items with associated book data
+     */
     async getCartItems(cartId) {
         const cartItems = await this.shoppingCartItems.findAll({
-            where: {
-                shopping_cart_id: cartId
-            },
-            include: [
-                {
-                    model: _database.DB.Books,
-                    as: 'book'
-                }
-            ]
+            where: { shopping_cart_id: cartId },
+            include: [{ model: _database_1.DB.Books, as: 'book' }],
         });
         if (cartItems.length === 0) {
             throw new Error('Shopping cart items not found');
         }
         return cartItems;
     }
+    /**
+     * Creates the order record
+     * @returns {Promise<Order>} The created order record
+     */
     async createOrderRecord(orderData, cartItems) {
-        const totalAmount = cartItems.reduce((acc, item)=>acc + item.book.price * item.quantity, 0);
-        return await this.order.create(_object_spread_props(_object_spread({}, orderData), {
-            total_amount: totalAmount
-        }));
+        const totalAmount = cartItems.reduce((acc, item) => acc + item.book.price * item.quantity, 0);
+        return await this.order.create(Object.assign(Object.assign({}, orderData), { total_amount: totalAmount }));
     }
+    /**
+     * Creates order items records
+     * @returns {Promise<void>}
+     */
     async createOrderItems(orderId, cartItems, transaction) {
-        const orderItems = cartItems.map((item)=>({
-                order_id: orderId,
-                book_id: item.book_id,
-                quantity: item.quantity,
-                price_at_purchase: item.book.price
-            }));
-        await this.orderItems.bulkCreate(orderItems, {
-            transaction
-        });
+        const orderItems = cartItems.map(item => ({
+            order_id: orderId,
+            book_id: item.book_id,
+            quantity: item.quantity,
+            price_at_purchase: item.book.price,
+        }));
+        await this.orderItems.bulkCreate(orderItems, { transaction });
     }
+    /**
+     * Clears the shopping items
+     * @returns {Promise<void>}
+     */
     async clearShoppingCart(cartId) {
-        await this.shoppingCartItems.destroy({
-            where: {
-                shopping_cart_id: cartId
-            }
-        });
+        await this.shoppingCartItems.destroy({ where: { shopping_cart_id: cartId } });
     }
+    /**
+     * Checks inventory availability and locks books for update using pessimistic locking
+     * @param {any[]} cartItems
+     * @param {any} transaction
+     * @returns {Promise<void>}
+     */
     async checkAndLockInventory(cartItems, transaction) {
-        for (const item of cartItems){
-            const book = await _database.DB.Books.findByPk(item.book_id, {
+        for (const item of cartItems) {
+            const book = await _database_1.DB.Books.findByPk(item.book_id, {
                 lock: transaction.LOCK.UPDATE,
-                transaction
+                transaction,
             });
             if (!book) {
                 throw new Error(`Book with ID ${item.book_id} not found`);
@@ -147,78 +105,74 @@ let OrderService = class OrderService {
             }
         }
     }
+    /**
+     * Updates book inventory by decrementing quantities
+     * @param {any[]} cartItems
+     * @param {any} transaction
+     * @returns {Promise<void>}
+     */
     async updateBookInventory(cartItems, transaction) {
-        for (const item of cartItems){
-            await _database.DB.Books.decrement('stock_quantity', {
+        for (const item of cartItems) {
+            await _database_1.DB.Books.decrement('stock_quantity', {
                 by: item.quantity,
-                where: {
-                    id: item.book_id
-                },
-                transaction
+                where: { id: item.book_id },
+                transaction,
             });
         }
     }
+    /**
+     * Gets order history for a user
+     * @param {number} userId
+     * @returns {Promise<Order[]>}
+     */
     async getOrderHistory(userId) {
         const orders = await this.order.findAll({
-            where: {
-                user_id: userId
-            },
+            where: { user_id: userId },
             include: [
                 {
                     model: this.orderItems,
                     as: 'items',
                     include: [
                         {
-                            model: _database.DB.Books,
-                            as: 'book'
-                        }
-                    ]
-                }
+                            model: _database_1.DB.Books,
+                            as: 'book',
+                        },
+                    ],
+                },
             ],
-            order: [
-                [
-                    'createdAt',
-                    'DESC'
-                ]
-            ]
+            order: [['createdAt', 'DESC']],
         });
         return orders;
     }
+    /**
+     * Marks an order as paid and creates a transaction record
+     * @param {number} orderId
+     * @param {number} userId
+     * @returns {Promise<Order>}
+     */
     async markOrderAsPaid(orderId, userId) {
-        const transaction = await _database.DB.sequelize.transaction();
+        const transaction = await _database_1.DB.sequelize.transaction();
         try {
             const order = await this.order.findOne({
-                where: {
-                    id: orderId,
-                    user_id: userId
-                },
+                where: { id: orderId, user_id: userId },
                 lock: transaction.LOCK.UPDATE,
-                transaction
+                transaction,
             });
             if (!order) {
                 throw new Error('Order not found');
             }
-            if (order.status === _orderinterface.OrderStatus.PAID) {
+            if (order.status === order_interface_1.OrderStatus.PAID) {
                 throw new Error('Order is already marked as paid');
             }
-            await this.order.update({
-                status: _orderinterface.OrderStatus.PAID
-            }, {
-                where: {
-                    id: orderId
-                },
-                transaction
-            });
+            await this.order.update({ status: order_interface_1.OrderStatus.PAID }, { where: { id: orderId }, transaction });
             const referenceId = `TXN-${Date.now()}-${orderId}`;
-            await _database.DB.Transaction.create({
+            await _database_1.DB.Transaction.create({
                 user_id: userId,
                 order_id: orderId,
                 reference_id: referenceId,
                 amount: order.total_amount,
-                status: _transactioninterface.TransactionStatus.SUCCESSFUL
-            }, {
-                transaction
-            });
+                status: transaction_interface_1.TransactionStatus.SUCCESSFUL,
+            }, { transaction });
             await transaction.commit();
             return await this.order.findByPk(orderId, {
                 include: [
@@ -227,29 +181,23 @@ let OrderService = class OrderService {
                         as: 'items',
                         include: [
                             {
-                                model: _database.DB.Books,
-                                as: 'book'
-                            }
-                        ]
+                                model: _database_1.DB.Books,
+                                as: 'book',
+                            },
+                        ],
                     },
                     {
-                        model: _database.DB.Transaction,
-                        as: 'transaction'
-                    }
-                ]
+                        model: _database_1.DB.Transaction,
+                        as: 'transaction',
+                    },
+                ],
             });
-        } catch (error) {
+        }
+        catch (error) {
             await transaction.rollback();
             throw error;
         }
     }
-    constructor(){
-        _define_property(this, "order", _database.DB.Order);
-        _define_property(this, "orderItems", _database.DB.OrderItems);
-        _define_property(this, "shoppingCart", _database.DB.ShoppingCart);
-        _define_property(this, "shoppingCartItems", _database.DB.ShoppingCartItems);
-    }
-};
-const _default = OrderService;
-
+}
+exports.default = OrderService;
 //# sourceMappingURL=orderService.service.js.map

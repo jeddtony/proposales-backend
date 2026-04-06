@@ -1,55 +1,29 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-Object.defineProperty(exports, "HuggingFaceProvider", {
-    enumerable: true,
-    get: function() {
-        return HuggingFaceProvider;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HuggingFaceProvider = void 0;
+const inference_1 = require("@huggingface/inference");
+const _config_1 = require("@config");
+class HuggingFaceProvider {
+    constructor(model = 'meta-llama/Llama-3.1-8B-Instruct') {
+        if (!_config_1.HUGGINGFACE_API_KEY)
+            throw new Error('HUGGINGFACE_API_KEY is not set');
+        this.client = new inference_1.InferenceClient(_config_1.HUGGINGFACE_API_KEY);
+        this.model = model;
     }
-});
-const _inference = require("@huggingface/inference");
-const _config = require("../../config");
-function _define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-let HuggingFaceProvider = class HuggingFaceProvider {
     async chat(messages) {
-        var _response_choices__message_content;
+        var _a;
         const response = await this.client.chatCompletion({
             model: this.model,
-            messages
+            messages,
         });
         return {
-            text: (_response_choices__message_content = response.choices[0].message.content) !== null && _response_choices__message_content !== void 0 ? _response_choices__message_content : '',
-            provider: 'huggingface'
+            text: (_a = response.choices[0].message.content) !== null && _a !== void 0 ? _a : '',
+            provider: 'huggingface',
         };
     }
     async complete(prompt) {
-        return this.chat([
-            {
-                role: 'user',
-                content: prompt
-            }
-        ]);
+        return this.chat([{ role: 'user', content: prompt }]);
     }
-    constructor(model = 'meta-llama/Llama-3.1-8B-Instruct'){
-        _define_property(this, "client", void 0);
-        _define_property(this, "model", void 0);
-        if (!_config.HUGGINGFACE_API_KEY) throw new Error('HUGGINGFACE_API_KEY is not set');
-        this.client = new _inference.InferenceClient(_config.HUGGINGFACE_API_KEY);
-        this.model = model;
-    }
-};
-
+}
+exports.HuggingFaceProvider = HuggingFaceProvider;
 //# sourceMappingURL=huggingFaceProvider.js.map

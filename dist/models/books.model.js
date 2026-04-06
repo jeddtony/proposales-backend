@@ -1,82 +1,52 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-function _export(target, all) {
-    for(var name in all)Object.defineProperty(target, name, {
-        enumerable: true,
-        get: Object.getOwnPropertyDescriptor(all, name).get
-    });
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BookModel = void 0;
+const sequelize_1 = require("sequelize");
+class BookModel extends sequelize_1.Model {
 }
-_export(exports, {
-    get BookModel () {
-        return BookModel;
-    },
-    get default () {
-        return _default;
-    }
-});
-const _sequelize = require("sequelize");
-function _define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-let BookModel = class BookModel extends _sequelize.Model {
-    constructor(...args){
-        super(...args), _define_property(this, "id", void 0), _define_property(this, "title", void 0), _define_property(this, "author", void 0), _define_property(this, "genre", void 0), _define_property(this, "is_available", void 0), _define_property(this, "price", void 0), _define_property(this, "stock_quantity", void 0), _define_property(this, "description", void 0), _define_property(this, "createdAt", void 0), _define_property(this, "updatedAt", void 0);
-    }
-};
-function _default(sequelize) {
+exports.BookModel = BookModel;
+function default_1(sequelize) {
     BookModel.init({
         id: {
-            type: _sequelize.DataTypes.INTEGER,
+            type: sequelize_1.DataTypes.INTEGER,
             primaryKey: true,
-            autoIncrement: true
+            autoIncrement: true,
         },
         title: {
-            type: _sequelize.DataTypes.STRING,
-            allowNull: false
+            type: sequelize_1.DataTypes.STRING,
+            allowNull: false,
         },
         author: {
-            type: _sequelize.DataTypes.STRING,
-            allowNull: false
+            type: sequelize_1.DataTypes.STRING,
+            allowNull: false,
         },
         genre: {
-            type: _sequelize.DataTypes.STRING,
-            allowNull: false
+            type: sequelize_1.DataTypes.STRING,
+            allowNull: false,
         },
         is_available: {
-            type: _sequelize.DataTypes.BOOLEAN,
+            type: sequelize_1.DataTypes.BOOLEAN,
             allowNull: false,
-            defaultValue: true
+            defaultValue: true,
         },
         price: {
-            type: _sequelize.DataTypes.INTEGER,
-            allowNull: false
+            type: sequelize_1.DataTypes.INTEGER,
+            allowNull: false,
         },
         stock_quantity: {
-            type: _sequelize.DataTypes.INTEGER,
+            type: sequelize_1.DataTypes.INTEGER,
             allowNull: false,
-            defaultValue: 20
+            defaultValue: 20, // i created a default stock quantity for quick testing
         },
         description: {
-            type: _sequelize.DataTypes.STRING,
-            allowNull: false
-        }
+            type: sequelize_1.DataTypes.STRING,
+            allowNull: false,
+        },
     }, {
         sequelize,
-        tableName: 'books'
+        tableName: 'books',
     });
     return BookModel;
 }
-
+exports.default = default_1;
 //# sourceMappingURL=books.model.js.map

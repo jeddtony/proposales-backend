@@ -9,6 +9,8 @@ export class ProposalRequestModel extends Model<ProposalRequest> implements Prop
   public company_name: string;
   public details: string;
   public proposal_uuid?: string | null;
+  public proposal_url?: string | null;
+  public proposal_generated_at?: Date | null;
   public created_at?: Date;
   public updated_at?: Date;
 }
@@ -43,6 +45,16 @@ export default function (sequelize: Sequelize): typeof ProposalRequestModel {
       },
       proposal_uuid: {
         type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null,
+      },
+      proposal_url: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null,
+      },
+      proposal_generated_at: {
+        type: DataTypes.DATE,
         allowNull: true,
         defaultValue: null,
       },

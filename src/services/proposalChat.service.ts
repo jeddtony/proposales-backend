@@ -129,7 +129,7 @@ Return an empty array if nothing is relevant. Do not include any explanation, on
       blocks,
     });
 
-    await proposalRequest.update({ proposal_uuid: proposal.uuid });
+    await proposalRequest.update({ proposal_uuid: proposal.uuid, proposal_url: proposal.url, proposal_generated_at: new Date() });
 
     const { data } = await proposalesClient.getProposal(proposal.uuid);
 
