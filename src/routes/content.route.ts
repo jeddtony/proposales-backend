@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import { ContentController } from '@controllers/content.controller';
 import { Routes } from '@interfaces/routes.interface';
+import { AuthMiddleware } from '@middlewares/auth.middleware';
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -28,9 +29,9 @@ export class ContentRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.post('/content', this.content.createContent);
-    this.router.put('/content', this.content.updateContent);
-    this.router.delete('/content', this.content.deleteContent);
-    this.router.post('/content/bulk-upload', upload.single('file'), this.content.bulkCreateContent);
+    this.router.post('/content', AuthMiddleware, this.content.createContent);
+    this.router.put('/content', AuthMiddleware, this.content.updateContent);
+    this.router.delete('/content', AuthMiddleware, this.content.deleteContent);
+    this.router.post('/content/bulk-upload', AuthMiddleware, upload.single('file'), this.content.bulkCreateContent);
   }
 }

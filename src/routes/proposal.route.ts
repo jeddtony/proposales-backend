@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { ProposalController } from '@controllers/proposal.controller';
 import { Routes } from '@interfaces/routes.interface';
+import { AuthMiddleware } from '@middlewares/auth.middleware';
 
 export class ProposalRoute implements Routes {
   public router = Router();
@@ -11,7 +12,7 @@ export class ProposalRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.get('/proposals/:uuid', this.proposal.getProposal);
-    this.router.post('/proposals', this.proposal.createProposal);
+    this.router.get('/proposals/:uuid', AuthMiddleware, this.proposal.getProposal);
+    this.router.post('/proposals', AuthMiddleware, this.proposal.createProposal);
   }
 }

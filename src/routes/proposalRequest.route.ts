@@ -4,6 +4,7 @@ import { ProposalChatController } from '@controllers/proposalChat.controller';
 import { CreateProposalRequestDto } from '@dtos/proposalRequest.dto';
 import { Routes } from '@interfaces/routes.interface';
 import { ValidationMiddleware } from '@middlewares/validation.middleware';
+import { AuthMiddleware } from '@middlewares/auth.middleware';
 import { proposalesClient } from '@utils/proposalesClient';
 import { llm } from '@utils/llm';
 import { nanoBananaClient } from '@utils/nanoBananaClient';
@@ -19,18 +20,18 @@ export class ProposalRequestRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.get('/proposal-requests', this.proposalRequest.getProposalRequests);
-    this.router.get('/proposal-requests/:id', this.proposalRequest.getProposalRequestById);
+    this.router.get('/proposal-requests', AuthMiddleware, this.proposalRequest.getProposalRequests);
+    this.router.get('/proposal-requests/:id', AuthMiddleware, this.proposalRequest.getProposalRequestById);
     this.router.post('/proposal-requests', ValidationMiddleware(CreateProposalRequestDto), this.proposalRequest.createProposalRequest);
-    this.router.get('/proposal-requests/:id/experience-summary', this.proposalRequest.generateExperienceSummary);
+    this.router.get('/proposal-requests/:id/experience-summary', AuthMiddleware, this.proposalRequest.generateExperienceSummary);
 
-    this.router.post('/proposal-requests/:id/chat/initialize', this.proposalChat.initializeChat);
-    this.router.get('/proposal-requests/:id/chat', this.proposalChat.getChatHistory);
-    this.router.post('/proposal-requests/:id/chat', this.proposalChat.sendMessage);
-    this.router.get('/proposal-requests/:id/relevant-content', this.proposalChat.getRelevantContent);
-    this.router.get('/proposal-requests/:id/proposal-draft', this.proposalChat.generateProposalDraft);
+    this.router.post('/proposal-requests/:id/chat/initialize', AuthMiddleware, this.proposalChat.initializeChat);
+    this.router.get('/proposal-requests/:id/chat', AuthMiddleware, this.proposalChat.getChatHistory);
+    this.router.post('/proposal-requests/:id/chat', AuthMiddleware, this.proposalChat.sendMessage);
+    this.router.get('/proposal-requests/:id/relevant-content', AuthMiddleware, this.proposalChat.getRelevantContent);
+    this.router.get('/proposal-requests/:id/proposal-draft', AuthMiddleware, this.proposalChat.generateProposalDraft);
 
-    this.router.get('/proposales/content', async (req: Request, res: Response, next: NextFunction) => {
+    this.router.get('/proposales/content', AuthMiddleware, async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { variation_id, product_id, include_archived, include_sources } = req.query as Record<string, string>;
         const data = await proposalesClient.listContent({
@@ -45,7 +46,7 @@ export class ProposalRequestRoute implements Routes {
       }
     });
 
-    this.router.get('/test/companies', async (_req: Request, res: Response, next: NextFunction) => {
+    this.router.get('/test/companies', AuthMiddleware, async (_req: Request, res: Response, next: NextFunction) => {
       try {
         const data = await proposalesClient.listCompanies();
         res.status(200).json(data);
@@ -54,7 +55,7 @@ export class ProposalRequestRoute implements Routes {
       }
     });
 
-    this.router.post('/test/llm', async (req: Request, res: Response, next: NextFunction) => {
+    this.router.post('/test/llm', AuthMiddleware, async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { prompt } = req.body;
         const result = await llm.complete(prompt ?? 'Say hello!');
@@ -64,7 +65,7 @@ export class ProposalRequestRoute implements Routes {
       }
     });
 
-    this.router.post('/test/generate-image', async (req: Request, res: Response, next: NextFunction) => {
+    this.router.post('/test/generate-image', AuthMiddleware, async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { prompt } = req.body;
         const image = await nanoBananaClient.generateImage(prompt ?? 'A beautiful sunset');
@@ -78,7 +79,7 @@ export class ProposalRequestRoute implements Routes {
       }
     });
 
-    this.router.post('/test/generate-and-upload-image', async (req: Request, res: Response, next: NextFunction) => {
+    this.router.post('/test/generate-and-upload-image', AuthMiddleware, async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { prompt } = req.body;
         const image = await nanoBananaClient.generateImage(prompt ?? 'A beautiful sunset');
