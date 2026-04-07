@@ -35,7 +35,7 @@ export class AuthService {
     const findUser: User = await DB.Users.scope('withPassword').findOne({ where: { email: userData.email } });
     if (!findUser) throw new HttpException(409, `This email ${userData.email} was not found`);
 
-    const isPasswordMatching: boolean = await compare(userData.password, findUser.password);
+    const isPasswordMatching = await compare(userData.password, (findUser as any).dataValues.password);
     if (!isPasswordMatching) throw new HttpException(409, 'Login credentials are not valid');
 
     const tokenData = createToken(findUser);
