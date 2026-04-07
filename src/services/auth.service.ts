@@ -16,7 +16,7 @@ const createToken = (user: User): TokenData => {
 };
 
 const createCookie = (tokenData: TokenData): string => {
-  return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn};`;
+  return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}; SameSite=None; Secure`;
 };
 
 @Service()
