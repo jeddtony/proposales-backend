@@ -20,6 +20,7 @@ export class ProposalRequestRoute implements Routes {
   }
 
   private initializeRoutes() {
+    this.router.get('/clients', AuthMiddleware, this.proposalRequest.getClients);
     this.router.get('/proposal-requests', AuthMiddleware, this.proposalRequest.getProposalRequests);
     this.router.get('/proposal-requests/:id', AuthMiddleware, this.proposalRequest.getProposalRequestById);
     this.router.post('/proposal-requests', ValidationMiddleware(CreateProposalRequestDto), this.proposalRequest.createProposalRequest);

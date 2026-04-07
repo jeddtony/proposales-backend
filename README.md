@@ -1,215 +1,227 @@
-# Digital Library API - Divest Assessment
+# Proposale API Integration
 
-This project is a **Digital Library API** built as an assessment for Divest. It's a RESTful API that provides functionality for managing books, users, shopping carts, and orders.
-
-## ⚠️ Assessment Notice
-
-This project was developed as an assessment for Divest, and as such, certain features are intentionally limited:
-
-- **Authentication**: Basic JWT-based authentication is implemented
-- **User Model**: Simplified user model with only email and password (no first name, last name, or other details as they weren't necessary for this assessment)
-- **Database**: Uses MySQL with Sequelize ORM
-- **Testing**: Unit tests are included but may not cover all edge cases
-- **Security**: Basic security measures are in place but may not be production-ready
-- **Error Handling**: Standard error handling is implemented
-- **Documentation**: API documentation is provided via Swagger UI
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Node.js (v16 or higher)
-- MySQL database
-- npm or yarn package manager
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/jeddtony/divest-assessment.git
-   cd divest-assessment
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   
-   Create a file named `.env.development.local` in the root directory with the following variables:
-   
-   ```env
-   # Server Configuration
-   NODE_ENV=development
-   PORT=3000
-   SECRET_KEY=your-secret-key-here
-   
-   # Database Configuration
-   DB_USER=your-database-username
-   DB_PASSWORD=your-database-password
-   DB_HOST=localhost
-   DB_PORT=3306
-   DB_DATABASE=your-database-name
-   
-   # CORS Configuration
-   ORIGIN=http://localhost:3000
-   CREDENTIALS=true
-   
-   # Logging Configuration
-   LOG_FORMAT=combined
-   LOG_DIR=logs
-   ```
-
-4. **Start the application**
-   ```bash
-   npm run dev
-   ```
-
-   The application will start on port 3000 and automatically run database migrations to set up the required tables.
-
-## 📚 API Documentation
-
-Once the application is running, you can access the interactive API documentation at:
-
-**http://localhost:3000/api-docs/**
-
-The documentation includes all available endpoints with request/response examples and authentication requirements.
-
-## 🏗️ Project Structure
-
-```
-src/
-├── app.ts                 # Express app configuration
-├── server.ts             # Server entry point
-├── config/               # Configuration files
-├── controllers/          # Route controllers
-├── database/             # Database configuration and migrations
-├── dtos/                 # Data Transfer Objects
-├── exceptions/           # Custom exception classes
-├── http/                 # HTTP request examples
-├── interfaces/           # TypeScript interfaces
-├── middlewares/          # Express middlewares
-├── models/               # Sequelize models
-├── routes/               # API routes
-├── services/             # Business logic services
-├── test/                 # Test files
-└── utils/                # Utility functions
-```
-
-## 🔧 Available Scripts
-
-- `npm run dev` - Start development server with hot reload
-- `npm start` - Start production server
-- `npm test` - Run test suite
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
-- `npm run migration:run` - Run database migrations
-
-## 🗄️ Database
-
-The application uses MySQL with Sequelize ORM. The following tables are automatically created when the application starts:
-
-- **users** - User accounts and authentication
-- **books** - Book catalog with inventory
-- **shopping_carts** - User shopping carts
-- **shopping_cart_items** - Items in shopping carts
-- **orders** - User orders
-- **order_items** - Items in orders
-- **transactions** - Payment transactions
-
-## 🔐 Authentication
-
-The API uses JWT (JSON Web Tokens) for authentication with a cookie-based approach. When users log in, the JWT token is automatically stored as an HttpOnly cookie, which means:
-
-- **No manual token handling**: You don't need to manually send the JWT token with every request
-- **Device-specific authentication**: Each device/browser maintains its own authentication session
-- **Automatic token management**: The token is automatically included in requests and cleared on logout
-- **Enhanced security**: HttpOnly cookies prevent XSS attacks from accessing the token
-
-For API testing tools that don't support cookies, you can still use the Authorization header:
-```
-Authorization: Bearer <your-jwt-token>
-```
-
-## 📋 API Endpoints
-
-### Authentication
-- `POST /signup` - User registration
-- `POST /login` - User login
-- `POST /logout` - User logout
-
-### Users
-- `GET /users` - Get all users
-- `GET /users/:id` - Get user by ID
-- `POST /users` - Create user
-- `PUT /users/:id` - Update user
-- `DELETE /users/:id` - Delete user
-
-### Books
-- `GET /books` - Get all books (with search)
-- `GET /books/:id` - Get book by ID
-- `POST /books` - Create book (admin only)
-
-### Shopping Cart
-- `GET /shopping-cart` - Get user's shopping cart
-- `POST /shopping-cart` - Add book to cart
-
-### Orders
-- `POST /order` - Create order from cart
-- `GET /order/history` - Get user's order history
-- `PATCH /order/:id/pay` - Mark order as paid
-
-## 🧪 Testing
-
-Run the test suite with:
-
-```bash
-npm test
-```
-
-The tests cover:
-- Authentication endpoints
-- User management
-- Book operations
-- Shopping cart functionality
-- Order processing
-
-## 🛠️ Technologies Used
-
-- **Backend**: Node.js, Express.js, TypeScript
-- **Database**: MySQL, Sequelize ORM
-- **Authentication**: JWT, bcrypt
-- **Validation**: class-validator, class-transformer
-- **Documentation**: Swagger/OpenAPI
-- **Testing**: Jest, Supertest
-- **Development**: Nodemon, ESLint, Prettier
-
-## 📝 Environment Variables
-
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| `NODE_ENV` | Environment mode | Yes | development |
-| `PORT` | Server port | Yes | 3000 |
-| `SECRET_KEY` | JWT secret key | Yes | - |
-| `DB_USER` | Database username | Yes | - |
-| `DB_PASSWORD` | Database password | Yes | - |
-| `DB_HOST` | Database host | Yes | localhost |
-| `DB_PORT` | Database port | Yes | 3306 |
-| `DB_DATABASE` | Database name | Yes | - |
-| `ORIGIN` | CORS origin | No | http://localhost:3000 |
-| `CREDENTIALS` | CORS credentials | No | true |
-| `LOG_FORMAT` | Log format | No | combined |
-| `LOG_DIR` | Log directory | No | logs |
-
-## 🤝 Contributing
-
-This is an assessment project, but if you have suggestions or find issues, feel free to provide feedback.
-
-## 📄 License
-
-This project is created for assessment purposes.
+A Node.js/Express backend that integrates with the [Proposales API](https://docs.proposales.com) to manage proposal requests, AI-powered proposal generation, content management, and image generation.
 
 ---
 
-**Note**: This API is designed for demonstration and assessment purposes. For production use, additional security measures, error handling, and testing would be required. 
+## Tech Stack
+
+- **Runtime**: Node.js + TypeScript
+- **Framework**: Express
+- **ORM**: Sequelize (MySQL)
+- **AI/LLM**: Anthropic Claude, OpenAI, HuggingFace, Vercel AI SDK (configurable via env)
+- **Image Generation**: NanoBanana (Gemini API)
+- **File Storage**: UploadCare
+- **Proposal Management**: Proposales API
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- MySQL database
+
+### Installation
+
+```bash
+npm install
+```
+
+### Environment Variables
+
+Create a `.env.development.local` file with the following:
+
+```env
+# Server
+NODE_ENV=development
+PORT=3000
+SECRET_KEY=your_secret_key
+ORIGIN=*
+CREDENTIALS=true
+LOG_FORMAT=dev
+LOG_DIR=logs
+
+# Database
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_DATABASE=your_db_name
+
+# Proposales
+PROPOSALES_API_KEY=your_proposales_api_key
+PROPOSALES_COMPANY_ID=your_company_id
+
+# LLM (choose one provider)
+LLM_PROVIDER=claude             # claude | openai | huggingface | vercel-ai
+ANTHROPIC_API_KEY=sk-ant-...
+OPENAI_API_KEY=sk-...
+HUGGINGFACE_API_KEY=hf_...
+VERCEL_AI_API_KEY=sk-...
+
+# Image Generation (NanoBanana/Gemini)
+GEMINI_API_KEY=your_gemini_key
+NANOBANANA_MODEL=gemini-2.5-flash-image
+IMAGE_OUTPUT_DIR=generated-images
+
+# UploadCare
+UPLOADCARE_PUB_KEY=your_uploadcare_public_key
+```
+
+### Database Setup
+
+```bash
+# Run all migrations
+npm run migration:run
+
+# Undo last migration
+npx sequelize db:migrate:undo
+```
+
+### Running the Server
+
+```bash
+# Development
+npm run dev
+
+# Production
+npm start
+```
+
+---
+
+## API Endpoints
+
+### Authentication
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| `POST` | `/signup` | Register a new user | No |
+| `POST` | `/login` | Login and receive auth cookie | No |
+| `POST` | `/logout` | Logout | Yes |
+
+---
+
+### Proposal Requests (RFPs)
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| `POST` | `/proposal-requests` | Submit a new RFP | No |
+| `GET` | `/proposal-requests` | List all RFPs (paginated) | Yes |
+| `GET` | `/proposal-requests/:id` | Get a single RFP | Yes |
+
+**Pagination query params:** `?page=1&limit=20`
+
+---
+
+### Clients
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| `GET` | `/clients` | List unique clients grouped by email (paginated) | Yes |
+
+**Pagination query params:** `?page=1&limit=20`
+
+---
+
+### AI Chat (Proposal Conversation)
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| `POST` | `/proposal-requests/:id/chat/initialize` | Generate experience summary and start chat | Yes |
+| `GET` | `/proposal-requests/:id/chat` | Get full chat history | Yes |
+| `POST` | `/proposal-requests/:id/chat` | Send a message and get AI reply | Yes |
+| `GET` | `/proposal-requests/:id/experience-summary` | Generate a one-off experience summary | Yes |
+| `GET` | `/proposal-requests/:id/relevant-content` | Fetch Proposales content relevant to the chat | Yes |
+| `GET` | `/proposal-requests/:id/proposal-draft` | Generate and create a proposal on Proposales | Yes |
+
+---
+
+### Proposals
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| `POST` | `/proposals` | Create a proposal on Proposales | Yes |
+| `GET` | `/proposals/:uuid` | Fetch a proposal from Proposales | Yes |
+
+**Create proposal request body:**
+```json
+{
+  "proposal_request_id": 1,
+  "title_md": "Proposal for Acme Corp",
+  "description_md": "A premium event experience for 300 guests",
+  "language": "en",
+  "recipient": {
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "email": "jane@acmecorp.com",
+    "phone": "+46701234567",
+    "company_name": "Acme Corp"
+  },
+  "tax_options": { "mode": "standard", "tax_included": false },
+  "blocks": []
+}
+```
+
+---
+
+### Content Management (Proposales)
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| `GET` | `/proposales/content` | List all content in Proposales account | Yes |
+| `POST` | `/content` | Create a content item | Yes |
+| `PUT` | `/content` | Update a content item | Yes |
+| `DELETE` | `/content` | Delete a content item | Yes |
+| `POST` | `/content/bulk-upload` | Bulk upload content from spreadsheet | Yes |
+
+**Bulk upload spreadsheet columns:**
+
+| Column | Required | Description |
+|---|---|---|
+| `title` | Yes | Content title |
+| `language` | No | ISO code, defaults to `en` |
+| `description` | No | Content description |
+| `image_url` | No | Publicly accessible image URL |
+
+Accepts `.xlsx`, `.xls`, `.csv`. Send as `multipart/form-data` with field name `file`.
+
+---
+
+### Image Generation (NanoBanana)
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| `POST` | `/test/generate-image` | Generate an image and return as file download | Yes |
+| `POST` | `/test/generate-and-upload-image` | Generate an image and upload to UploadCare | Yes |
+
+**Request body:**
+```json
+{ "prompt": "A futuristic city at night" }
+```
+
+---
+
+### Test Endpoints
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| `GET` | `/test/companies` | Fetch Proposales companies | Yes |
+| `POST` | `/test/llm` | Test the configured LLM provider | Yes |
+
+---
+
+## LLM Providers
+
+Set `LLM_PROVIDER` in your `.env` to switch providers:
+
+| Value | Provider | Model |
+|---|---|---|
+| `claude` | Anthropic Claude | `claude-sonnet-4-6` |
+| `openai` | OpenAI | `gpt-4o-mini` |
+| `huggingface` | HuggingFace | `meta-llama/Llama-3.1-8B-Instruct` |
+| `vercel-ai` | Vercel AI SDK (OpenAI) | `gpt-4o-mini` |
+
+---
+
+## Database Migrations
+
+| Migration | Description |
+|---|---|
+| `20260403000000-create-proposal-requests` | Creates `proposal_requests` table |
+| `20260404000000-create-proposal-chats` | Creates `proposal_chats` table |
+| `20260405000000-add-proposal-uuid-to-proposal-requests` | Adds `proposal_uuid`, `proposal_url`, `proposal_generated_at` columns |

@@ -8,10 +8,12 @@ import { generateExperienceSummary } from '@utils/proposalAI';
 export class ProposalRequestController {
   public proposalRequestService = Container.get(ProposalRequestService);
 
-  public getProposalRequests = async (_req: Request, res: Response, next: NextFunction) => {
+  public getProposalRequests = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const records: ProposalRequest[] = await this.proposalRequestService.getProposalRequests();
-      res.status(200).json({ data: records, message: 'Proposal requests retrieved successfully' });
+      const page = Math.max(1, Number(req.query.page) || 1);
+      const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 20));
+      const { rows, count, total_pages } = await this.proposalRequestService.getProposalRequests(page, limit);
+      res.status(200).json({ data: rows, meta: { page, limit, total: count, total_pages }, message: 'Proposal requests retrieved successfully' });
     } catch (error) {
       next(error);
     }
@@ -33,6 +35,17 @@ export class ProposalRequestController {
       const created: ProposalRequest = await this.proposalRequestService.createProposalRequest(data);
 
       res.status(201).json({ data: created, message: 'Proposal request submitted successfully' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public getClients = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const page = Math.max(1, Number(req.query.page) || 1);
+      const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 20));
+      const { rows, count, total_pages } = await this.proposalRequestService.getClients(page, limit);
+      res.status(200).json({ data: rows, meta: { page, limit, total: count, total_pages }, message: 'Clients retrieved successfully' });
     } catch (error) {
       next(error);
     }
