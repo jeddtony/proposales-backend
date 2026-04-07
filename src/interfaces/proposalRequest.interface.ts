@@ -5,6 +5,9 @@ export interface ProposalRequest {
   phone_number: string;
   company_name: string;
   details: string;
+  event_date?: Date | null;
+  guests?: number | null;
+  budget?: number | null;
   proposal_uuid?: string | null;
   proposal_url?: string | null;
   proposal_generated_at?: Date | null;

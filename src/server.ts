@@ -9,6 +9,7 @@ import { ProposalRequestRoute } from '@routes/proposalRequest.route';
 import { ContentRoute } from '@routes/content.route';
 import { ProposalRoute } from '@routes/proposal.route';
 import { SettingsRoute } from '@routes/settings.route';
+import { DashboardRoute } from '@routes/dashboard.route';
 
 ValidateEnv();
 
@@ -22,6 +23,7 @@ const app = new App([
   new ContentRoute(),
   new ProposalRoute(),
   new SettingsRoute(),
+  new DashboardRoute(),
 ]);
 
 app.listen();

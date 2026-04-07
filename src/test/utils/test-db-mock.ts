@@ -57,6 +57,25 @@ jest.mock('@database', () => ({
       update: jest.fn(),
       destroy: jest.fn(),
     },
+    ProposalRequest: {
+      findAll: jest.fn(),
+      findAndCountAll: jest.fn(),
+      findByPk: jest.fn(),
+      findOne: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+    },
+    ProposalChat: {
+      findAll: jest.fn(),
+      findByPk: jest.fn(),
+      findOne: jest.fn(),
+      create: jest.fn(),
+    },
+    Settings: {
+      findOne: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+    },
     sequelize: {
       sync: jest.fn().mockResolvedValue(undefined),
       authenticate: jest.fn().mockResolvedValue(undefined),

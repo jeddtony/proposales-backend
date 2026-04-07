@@ -6,7 +6,7 @@ import { Routes } from '@interfaces/routes.interface';
 import { ValidationMiddleware } from '@middlewares/validation.middleware';
 import { AuthMiddleware } from '@middlewares/auth.middleware';
 import { proposalesClient } from '@utils/proposalesClient';
-import { llm } from '@utils/llm';
+import { getLLM } from '@utils/llm';
 import { nanoBananaClient } from '@utils/nanoBananaClient';
 import { uploadCareClient } from '@utils/uploadCareClient';
 
@@ -59,6 +59,7 @@ export class ProposalRequestRoute implements Routes {
     this.router.post('/test/llm', AuthMiddleware, async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { prompt } = req.body;
+        const llm = await getLLM();
         const result = await llm.complete(prompt ?? 'Say hello!');
         res.status(200).json(result);
       } catch (error) {

@@ -1,4 +1,4 @@
-import { llm } from '@utils/llm';
+import { getLLM } from '@utils/llm';
 import { ProposalRequest } from '@interfaces/proposalRequest.interface';
 
 const SYSTEM_PROMPT = `You are an expert event and proposal consultant.
@@ -22,6 +22,7 @@ Details / RFP: ${proposalRequest.details}
 Based on the above, generate a compelling event experience overview and proposal summary.
   `.trim();
 
+  const llm = await getLLM();
   const response = await llm.chat([
     { role: 'system', content: SYSTEM_PROMPT },
     { role: 'user', content: userMessage },

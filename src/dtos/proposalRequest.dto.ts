@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsNotEmpty } from 'class-validator';
+import { IsString, IsEmail, IsNotEmpty, IsOptional, IsInt, IsNumber, IsDateString } from 'class-validator';
 
 export class CreateProposalRequestDto {
   @IsString()
@@ -19,4 +19,16 @@ export class CreateProposalRequestDto {
   @IsString()
   @IsNotEmpty()
   public details: string;
+
+  @IsDateString()
+  @IsOptional()
+  public event_date?: string;
+
+  @IsInt()
+  @IsOptional()
+  public guests?: number;
+
+  @IsNumber()
+  @IsOptional()
+  public budget?: number;
 }

@@ -6,7 +6,7 @@ import { ProposalChat } from '@interfaces/proposalChat.interface';
 import { LLMMessage } from '@interfaces/llm.interface';
 import { ContentItem, proposalesClient } from '@utils/proposalesClient';
 import { PROPOSALES_COMPANY_ID } from '@config';
-import { llm } from '@utils/llm';
+import { getLLM } from '@utils/llm';
 import { generateExperienceSummary } from '@utils/proposalAI';
 
 @Service()
@@ -66,6 +66,7 @@ Return ONLY a JSON array of the indexes of content items that are relevant to th
 Example response: [0, 3, 7]
 Return an empty array if nothing is relevant. Do not include any explanation, only the JSON array.`;
 
+    const llm = await getLLM();
     const response = await llm.complete(prompt);
 
     let relevantIndexes: number[] = [];
@@ -162,6 +163,7 @@ Continue the conversation naturally, answering questions and refining the propos
       })),
     ];
 
+    const llm = await getLLM();
     const response = await llm.chat(messages);
 
     return DB.ProposalChat.create({

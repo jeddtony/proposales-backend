@@ -8,6 +8,9 @@ export class ProposalRequestModel extends Model<ProposalRequest> implements Prop
   public phone_number: string;
   public company_name: string;
   public details: string;
+  public event_date?: Date | null;
+  public guests?: number | null;
+  public budget?: number | null;
   public proposal_uuid?: string | null;
   public proposal_url?: string | null;
   public proposal_generated_at?: Date | null;
@@ -42,6 +45,21 @@ export default function (sequelize: Sequelize): typeof ProposalRequestModel {
       details: {
         type: DataTypes.TEXT,
         allowNull: false,
+      },
+      event_date: {
+        type: DataTypes.DATEONLY,
+        allowNull: true,
+        defaultValue: null,
+      },
+      guests: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+      },
+      budget: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: null,
       },
       proposal_uuid: {
         type: DataTypes.STRING,
