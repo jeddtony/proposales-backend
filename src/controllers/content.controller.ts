@@ -110,6 +110,11 @@ export class ContentController {
 
       res.status(200).json({
         data: results,
+        summary: {
+          total: results.length,
+          succeeded,
+          failed,
+        },
         message: `Bulk upload complete: ${succeeded} succeeded, ${failed} failed`,
       });
     } catch (error) {

@@ -9,6 +9,7 @@ import OrderItemsModel from '@models/orderItems.model';
 import TransactionModel from '@models/transaction.model';
 import ProposalRequestModel from '@models/proposalRequest.model';
 import ProposalChatModel from '@models/proposalChat.model';
+import SettingsModel from '@models/settings.model';
 import { logger } from '@utils/logger';
 
 const sequelize = new Sequelize.Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
@@ -45,6 +46,7 @@ const OrderItems = OrderItemsModel(sequelize);
 const Transaction = TransactionModel(sequelize);
 const ProposalRequest = ProposalRequestModel(sequelize);
 const ProposalChat = ProposalChatModel(sequelize);
+const Settings = SettingsModel(sequelize);
 
 // Model relationships are listed here
 Users.hasOne(ShoppingCart, { foreignKey: 'user_id', sourceKey: 'id' });
@@ -77,6 +79,7 @@ export const DB = {
   Transaction,
   ProposalRequest,
   ProposalChat,
+  Settings,
   sequelize,
   Sequelize,
 };

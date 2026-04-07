@@ -8,6 +8,7 @@ import { OrderRoute } from '@routes/order.route';
 import { ProposalRequestRoute } from '@routes/proposalRequest.route';
 import { ContentRoute } from '@routes/content.route';
 import { ProposalRoute } from '@routes/proposal.route';
+import { SettingsRoute } from '@routes/settings.route';
 
 ValidateEnv();
 
@@ -20,6 +21,7 @@ const app = new App([
   new ProposalRequestRoute(),
   new ContentRoute(),
   new ProposalRoute(),
+  new SettingsRoute(),
 ]);
 
 app.listen();
