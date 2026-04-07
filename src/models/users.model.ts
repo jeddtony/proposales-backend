@@ -37,9 +37,9 @@ export default function (sequelize: Sequelize): typeof UserModel {
       },
       scopes: {
         withPassword: {
-          attributes: { exclude: [] },
+          attributes: ['id', 'email', 'password', 'createdAt', 'updatedAt'],
         },
-      }
+      },
     },
   );
 
