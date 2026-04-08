@@ -8,6 +8,8 @@ import { ContentItem, proposalesClient } from '@utils/proposalesClient';
 import { PROPOSALES_COMPANY_ID } from '@config';
 import { getLLM } from '@utils/llm';
 import { generateExperienceSummary } from '@utils/proposalAI';
+import * as ContentMatcherPrompt from '@prompts/contentMatcher.prompt';
+import * as ProposalChatPrompt from '@prompts/proposalChat.prompt';
 
 @Service()
 export class ProposalChatService {
@@ -52,19 +54,10 @@ export class ProposalChatService {
       return `[${index}] product_id:${item.product_id}, variation_id:${item.variation_id} | Title: "${title}" | Description: "${description}"`;
     });
 
-    const prompt = `You are a proposal content matcher.
-
-Given the following event/proposal experience summary:
-"""
-${lastAssistantMessage.message}
-"""
-
-And the following list of available content items (indexed):
-${contentSummaries.join('\n')}
-
-Return ONLY a JSON array of the indexes of content items that are relevant to the event experience described above.
-Example response: [0, 3, 7]
-Return an empty array if nothing is relevant. Do not include any explanation, only the JSON array.`;
+    const prompt = ContentMatcherPrompt.user({
+      experienceSummary: lastAssistantMessage.message,
+      contentSummaries,
+    });
 
     const llm = await getLLM();
     const response = await llm.complete(prompt);
@@ -152,10 +145,7 @@ Return an empty array if nothing is relevant. Do not include any explanation, on
     const messages: LLMMessage[] = [
       {
         role: 'system',
-        content: `You are an expert event and proposal consultant helping a client refine their event proposal.
-The client's RFP details: ${proposalRequest.details}
-Company: ${proposalRequest.company_name}
-Continue the conversation naturally, answering questions and refining the proposal experience based on the client's feedback.`,
+        content: ProposalChatPrompt.system({ details: proposalRequest.details, company_name: proposalRequest.company_name }),
       },
       ...history.map(entry => ({
         role: entry.role as 'user' | 'assistant',
