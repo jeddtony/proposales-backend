@@ -4,6 +4,7 @@ import * as ExperienceSummaryPrompt from '@prompts/experienceSummary.prompt';
 
 export async function generateExperienceSummary(proposalRequest: ProposalRequest): Promise<string> {
   const llm = await getLLM();
+  console.log('Generating experience summary with the following proposal request details:', proposalRequest);
   const response = await llm.chat([
     { role: 'system', content: ExperienceSummaryPrompt.system() },
     { role: 'user', content: ExperienceSummaryPrompt.user(proposalRequest) },
