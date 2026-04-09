@@ -2,10 +2,10 @@ import { Sequelize, DataTypes, Model } from 'sequelize';
 import { Settings, LLMProviderOption } from '@interfaces/settings.interface';
 
 export class SettingsModel extends Model<Settings> implements Settings {
-  public id: number;
-  public llm_provider: LLMProviderOption;
-  public created_at?: Date;
-  public updated_at?: Date;
+  public declare id: number;
+  public declare llm_provider: LLMProviderOption;
+  public declare created_at?: Date;
+  public declare updated_at?: Date;
 }
 
 export default function (sequelize: Sequelize): typeof SettingsModel {

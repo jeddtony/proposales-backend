@@ -2,17 +2,17 @@ import { Sequelize, DataTypes, Model } from 'sequelize';
 import { Book } from '@interfaces/books.interface';
 
 export class BookModel extends Model<Book> implements Book {
-  public id: number;
-  public title: string;
-  public author: string;
-  public genre: string;
-  public is_available: boolean;
-  public price: number;
-  public stock_quantity: number;
-  public description: string;
+  public declare id: number;
+  public declare title: string;
+  public declare author: string;
+  public declare genre: string;
+  public declare is_available: boolean;
+  public declare price: number;
+  public declare stock_quantity: number;
+  public declare description: string;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  public declare readonly createdAt: Date;
+  public declare readonly updatedAt: Date;
 }
 
 export default function (sequelize: Sequelize): typeof BookModel {

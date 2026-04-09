@@ -2,20 +2,20 @@ import { Sequelize, DataTypes, Model } from 'sequelize';
 import { ProposalRequest } from '@interfaces/proposalRequest.interface';
 
 export class ProposalRequestModel extends Model<ProposalRequest> implements ProposalRequest {
-  public id: number;
-  public name: string;
-  public email: string;
-  public phone_number: string;
-  public company_name: string;
-  public details: string;
-  public event_date?: Date | null;
-  public guests?: number | null;
-  public budget?: number | null;
-  public proposal_uuid?: string | null;
-  public proposal_url?: string | null;
-  public proposal_generated_at?: Date | null;
-  public created_at?: Date;
-  public updated_at?: Date;
+  public declare id: number;
+  public declare name: string;
+  public declare email: string;
+  public declare phone_number: string;
+  public declare company_name: string;
+  public declare details: string;
+  public declare event_date?: Date | null;
+  public declare guests?: number | null;
+  public declare budget?: number | null;
+  public declare proposal_uuid?: string | null;
+  public declare proposal_url?: string | null;
+  public declare proposal_generated_at?: Date | null;
+  public declare created_at?: Date;
+  public declare updated_at?: Date;
 }
 
 export default function (sequelize: Sequelize): typeof ProposalRequestModel {

@@ -2,10 +2,10 @@ import { Sequelize, DataTypes, Model } from 'sequelize';
 import { ShoppingCart } from '@interfaces/shoppingCart.interface';
 
 export class ShoppingCartModel extends Model<ShoppingCart> implements ShoppingCart {
-  public id: number;
-  public user_id: number;
-  public createdAt!: Date;
-  public updatedAt!: Date;
+  public declare id: number;
+  public declare user_id: number;
+  public declare createdAt: Date;
+  public declare updatedAt: Date;
 }
 
 export default function (sequelize: Sequelize): typeof ShoppingCartModel {

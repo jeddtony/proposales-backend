@@ -2,12 +2,12 @@ import { Sequelize, DataTypes, Model } from 'sequelize';
 import { ProposalChat, ChatRole } from '@interfaces/proposalChat.interface';
 
 export class ProposalChatModel extends Model<ProposalChat> implements ProposalChat {
-  public id: number;
-  public proposal_request_id: number;
-  public role: ChatRole;
-  public message: string;
-  public created_at?: Date;
-  public updated_at?: Date;
+  public declare id: number;
+  public declare proposal_request_id: number;
+  public declare role: ChatRole;
+  public declare message: string;
+  public declare created_at?: Date;
+  public declare updated_at?: Date;
 }
 
 export default function (sequelize: Sequelize): typeof ProposalChatModel {

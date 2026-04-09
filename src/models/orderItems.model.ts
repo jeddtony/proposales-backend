@@ -2,13 +2,13 @@ import { Sequelize, DataTypes, Model } from 'sequelize';
 import { OrderItems } from '@interfaces/orderItems.interface';
 
 export class OrderItemsModel extends Model<OrderItems> implements OrderItems {
-  public id: number;
-  public order_id: number;
-  public book_id: number;
-  public quantity: number;
-  public price_at_purchase: number;
-  public created_at?: Date;
-  public updated_at?: Date;
+  public declare id: number;
+  public declare order_id: number;
+  public declare book_id: number;
+  public declare quantity: number;
+  public declare price_at_purchase: number;
+  public declare created_at?: Date;
+  public declare updated_at?: Date;
 }
 
 export default function (sequelize: Sequelize): typeof OrderItemsModel {

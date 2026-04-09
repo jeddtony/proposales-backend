@@ -2,14 +2,14 @@ import { Sequelize, DataTypes, Model } from 'sequelize';
 import { Transaction, TransactionStatus } from '@interfaces/transaction.interface';
 
 export class TransactionModel extends Model<Transaction> implements Transaction {
-  public id: number;
-  public user_id: number;
-  public order_id: number;
-  public reference_id: string;
-  public amount: number;
-  public status: TransactionStatus;
-  public created_at?: Date;
-  public updated_at?: Date;
+  public declare id: number;
+  public declare user_id: number;
+  public declare order_id: number;
+  public declare reference_id: string;
+  public declare amount: number;
+  public declare status: TransactionStatus;
+  public declare created_at?: Date;
+  public declare updated_at?: Date;
 }
 
 export default function (sequelize: Sequelize): typeof TransactionModel {
