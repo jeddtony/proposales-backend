@@ -37,12 +37,9 @@ export class ProposalChatService {
   }
 
   public async getRelevantContent(proposalRequestId: number): Promise<ContentItem[]> {
-    const lastAssistantMessage = await DB.ProposalChat.findOne({
-      where: { proposal_request_id: proposalRequestId, role: 'assistant' },
-      order: [['created_at', 'DESC']],
-    });
+    const history = await this.getChatHistory(proposalRequestId);
 
-    if (!lastAssistantMessage) throw new HttpException(404, 'No assistant message found for this proposal request. Initialize the chat first.');
+    if (history.length === 0) throw new HttpException(404, 'No chat history found for this proposal request. Initialize the chat first.');
 
     const { data: allContent } = await proposalesClient.listContent();
 
@@ -54,8 +51,10 @@ export class ProposalChatService {
       return `[${index}] product_id:${item.product_id}, variation_id:${item.variation_id} | Title: "${title}" | Description: "${description}"`;
     });
 
+    const chatHistory = history.map(entry => `${entry.role === 'assistant' ? 'Assistant' : 'Client'}: ${entry.message}`).join('\n\n');
+
     const prompt = ContentMatcherPrompt.user({
-      experienceSummary: lastAssistantMessage.message,
+      chatHistory,
       contentSummaries,
     });
 
